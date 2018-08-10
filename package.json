@@ -1,0 +1,68 @@
+{
+    "name": "yummy-nuget",
+    "displayName": "yummy-nuget",
+    "description": "Mmmmmmmmm",
+    "version": "0.0.1",
+    "publisher": "MatthewKowalski",
+    "engines": {
+        "vscode": "^1.25.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "workspaceContains:**/*.csproj"
+    ],
+    "main": "./out/extension",
+    "contributes": {
+        "views": {
+            "explorer": [
+                {
+                    "id": "nugetPackages",
+                    "name": "NuGet",
+                    "when": "supportsNuget"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "nugetPackages.refresh",
+                "title": "Refresh",
+                "category": "NuGet",
+                "icon": {
+                    "light": "media/light/refresh.svg",
+                    "dark": "media/dark/refresh.svg"
+                }
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "nugetPackages.refresh",
+                    "when": "view == nugetPackages",
+                    "group": "navigation"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/mocha": "^2.2.42",
+        "@types/node": "^7.0.43",
+        "@types/xregexp": "^3.0.29",
+        "tslint": "^5.8.0",
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6"
+    },
+    "dependencies": {
+        "axios": "^0.18.0",
+        "xml-js": "^1.6.7",
+        "xregexp": "^4.2.0"
+    }
+}
