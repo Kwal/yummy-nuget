@@ -1,9 +1,13 @@
 {
     "name": "yummy-nuget",
-    "displayName": "yummy-nuget",
-    "description": "Mmmmmmmmm",
+    "displayName": "Yummy NuGet",
+    "description": "VSCode extension to help manage NuGet dependencies within C# projects",
     "version": "0.0.1",
-    "publisher": "MatthewKowalski",
+    "publisher": "Matthew owalski",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Kwal/yummy-nuget"
+    },
     "engines": {
         "vscode": "^1.25.0"
     },
