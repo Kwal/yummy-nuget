@@ -3,7 +3,7 @@
     "displayName": "Yummy NuGet",
     "description": "VSCode extension to help manage NuGet dependencies within C# projects",
     "version": "0.0.1",
-    "publisher": "MatthewKowalski",
+    "publisher": "kwal",
     "repository": {
         "type": "git",
         "url": "https://github.com/Kwal/yummy-nuget"
