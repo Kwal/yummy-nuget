@@ -57,6 +57,12 @@ export class PackageNodeProvider implements vscode.TreeDataProvider<Node> {
         });
     }
 
+    private getFramework(node: Node): string {
+        return node instanceof ProjectNode
+            ? (node as ProjectNode).framework
+            : this.getFramework((node as DependencyNode).parent);
+    }
+
     private async getProjects(): Promise<ProjectNode[]> {
         const projectFiles = await vscode.workspace.findFiles('**/*.csproj');
         return projectFiles.length
@@ -90,19 +96,20 @@ export class PackageNodeProvider implements vscode.TreeDataProvider<Node> {
         }, []);
 
         return Promise.all(packages.map(async (p: any) => {
-            const metadata = await this.getDependencyMetadata(p.name, p.version);
-            return new PackageNode(p.name, p.version, metadata);
+            const metadata = await this.getDependencyMetadata(p.name, p.version, project.framework);
+            return new PackageNode(p.name, p.version, metadata, project);
         }) as PackageNode[]);
     }
 
     private async getPackageDependencies(dep: DependencyNode): Promise<DependencyNode[]> {
         return Promise.all(dep.metadata.dependencies.map(async (d: Dependency) => {
-            const metadata = await this.getDependencyMetadata(d.name, d.version);
-            return new DependencyNode(d.name, d.version, metadata);
+            const framework = this.getFramework(dep);
+            const metadata = await this.getDependencyMetadata(d.name, d.version, framework);
+            return new DependencyNode(d.name, d.version, metadata, dep);
         }));
     }
 
-    private async getDependencyMetadata(name: string, version: string): Promise<DependencyMetadata> {
+    private async getDependencyMetadata(name: string, version: string, framework: string): Promise<DependencyMetadata> {
         const catalogResponse = await axios.get(`${this.registrationUri}${name.toLowerCase()}/index.json`);
         if (catalogResponse.data.count >= 1) {
             const catalog = catalogResponse.data.items.find((i: any) => i.upper >= version && i.lower <= version);
@@ -111,7 +118,7 @@ export class PackageNodeProvider implements vscode.TreeDataProvider<Node> {
                     const catalogPageResponse = await axios.get(catalog['@id']);
                     const catalogItem = catalogPageResponse.data.items.find((i: any) => i.catalogEntry.version === version);
 
-                    // TODO: fix this
+                    // TODO: reconcile framework
                     const deps = catalogItem.catalogEntry.dependencyGroups
                         ? catalogItem.catalogEntry.dependencyGroups[0].dependencies || []
                         : [];
@@ -130,7 +137,7 @@ export class PackageNodeProvider implements vscode.TreeDataProvider<Node> {
                     const allItems = catalogResponse.data.items.reduce((current: any, i: any) => current.concat(i.items), []);
                     const catalogItem = allItems.find((i: any) => i.catalogEntry.version === version);
 
-                    // TODO: fix this
+                    // TODO: reconcile framework
                     const deps = catalogItem.catalogEntry.dependencyGroups
                         ? catalogItem.catalogEntry.dependencyGroups[0].dependencies || []
                         : [];

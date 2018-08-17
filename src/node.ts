@@ -36,7 +36,8 @@ export class DependencyNode extends Node {
     constructor(
         name: string,
         public readonly version: string,
-        public readonly metadata: DependencyMetadata
+        public readonly metadata: DependencyMetadata,
+        public readonly parent: Node
     ) {
         super(name, metadata.dependencies.length
             ? vscode.TreeItemCollapsibleState.Collapsed
@@ -53,9 +54,10 @@ export class PackageNode extends DependencyNode {
         name: string,
         version: string,
         metadata: DependencyMetadata,
+        project: ProjectNode,
         public readonly command?: vscode.Command
     ) {
-        super(name, version, metadata);
+        super(name, version, metadata, project);
         this.label = `${this.hasUpdate ? '*' : ''}${name} (${version})`;
     }
 
